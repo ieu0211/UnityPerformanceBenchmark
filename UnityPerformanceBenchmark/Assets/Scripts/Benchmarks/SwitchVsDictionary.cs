@@ -10,14 +10,33 @@ namespace BenchMarks
 {
 	public class SwitchVsDictionary : MonoBehaviour
 	{
-
-		private int _benchmarkCount = 1000000;
 		private Random _random = new Random();
+		private String _logText = "";
 		
-		void Start ()
+		private void Start()
+		{
+			_logText += "||Switch|Dictionary|\n";
+			_logText += "|---|--:|--:|\n";
+
+			_logText += "|1000";
+			Benchmark(1000);
+			
+			_logText += "|10000";
+			Benchmark(10000);
+			
+			_logText += "|100000";
+			Benchmark(100000);
+			
+			_logText += "|1000000";
+			Benchmark(1000000);
+			
+			Debug.Log(_logText);
+		}
+		
+		private void Benchmark (int benchmarkCount)
 		{
 			var randomNumbers = new List<Number>();
-			for (var i = 0; i < _benchmarkCount; i++)
+			for (var i = 0; i < benchmarkCount; i++)
 			{
 				var randomNumber = Enum.GetValues(typeof(Number))
 					.Cast<Number>()
@@ -36,7 +55,8 @@ namespace BenchMarks
 			
 			stopWatch.Stop();
 			
-			Debug.Log($"switch: {stopWatch.Elapsed}");
+			//Debug.Log($"switch: {stopWatch.Elapsed}");
+			_logText += $"{stopWatch.Elapsed}|";
 			
 			stopWatch.Restart();
 
@@ -47,7 +67,8 @@ namespace BenchMarks
 			
 			stopWatch.Stop();
 			
-			Debug.Log($"dictionary: {stopWatch.Elapsed}");
+			//Debug.Log($"dictionary: {stopWatch.Elapsed}");
+			_logText += $"{stopWatch.Elapsed}|\n";
 		}
 		
 		enum Number
