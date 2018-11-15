@@ -15,8 +15,8 @@ namespace BenchMarks
 		
 		private void Start()
 		{
-			_logText += "||Switch|Dictionary|\n";
-			_logText += "|---|--:|--:|\n";
+			_logText += "|回数|Switch|Dictionary|Dictionary with EqualityComparer|\n";
+			_logText += "|---|--:|--:|--:|\n";
 
 			_logText += "|1000";
 			Benchmark(1000);
@@ -55,8 +55,7 @@ namespace BenchMarks
 			
 			stopWatch.Stop();
 			
-			//Debug.Log($"switch: {stopWatch.Elapsed}");
-			_logText += $"{stopWatch.Elapsed}|";
+			_logText += $"{stopWatch.Elapsed.TotalMilliseconds}|";
 			
 			stopWatch.Restart();
 
@@ -67,10 +66,21 @@ namespace BenchMarks
 			
 			stopWatch.Stop();
 			
-			//Debug.Log($"dictionary: {stopWatch.Elapsed}");
-			_logText += $"{stopWatch.Elapsed}|\n";
+			_logText += $"{stopWatch.Elapsed.TotalMilliseconds}|";
+			
+			stopWatch.Restart();
+
+			foreach (var number in randomNumbers)
+			{
+				GetByDictionaryWithEqualityComparer(number);
+			}
+			
+			stopWatch.Stop();
+			
+			_logText += $"{stopWatch.Elapsed.TotalMilliseconds}|\n";
 		}
 		
+		// Switch
 		enum Number
 		{
 			One,
@@ -114,6 +124,7 @@ namespace BenchMarks
 			}
 		}
 
+		// Dictionary
 		private readonly Dictionary<Number, int> _numberTable = new Dictionary<Number, int>
 		{
 			{ Number.One,    1 },
@@ -132,5 +143,38 @@ namespace BenchMarks
 		{
 			return _numberTable[number];
 		}
-	}	
+
+		// Dictionary with EqualityComparer
+		private class NumberComparer : IEqualityComparer<Number>
+		{
+			public bool Equals(Number x, Number y)
+			{
+				return x == y;
+			}
+
+			public int GetHashCode(Number obj)
+			{
+				return (int)obj;
+			}
+		}
+		
+		private readonly Dictionary<Number, int> _numberTableWithEqualityComparer = new Dictionary<Number, int>(new NumberComparer())
+		{
+			{ Number.One,    1 },
+			{ Number.Two,    2 },
+			{ Number.Three,  3 },
+			{ Number.Four,   4 },
+			{ Number.Five,   5 },
+			{ Number.Six,    6 },
+			{ Number.Seven,  7 },
+			{ Number.Eight,  8 },
+			{ Number.Nine,   9 },
+			{ Number.Ten,   10 }
+		};
+
+		private int GetByDictionaryWithEqualityComparer(Number number)
+		{
+			return _numberTableWithEqualityComparer[number];
+		}
+	}
 }
